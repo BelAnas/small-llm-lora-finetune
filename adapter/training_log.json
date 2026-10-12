@@ -14,16 +14,16 @@
     "learning_rate": 0.0005,
     "warmup_steps": 30,
     "max_length": 160,
-    "eval_every": 50,
+    "eval_every": 100,
     "seed": 7
   },
-  "train_examples": 4000,
+  "train_examples": 8000,
   "val_examples": 300,
-  "steps": 250,
+  "steps": 500,
   "trainable_parameters": 1843200,
   "total_parameters": 136358208,
   "trainable_pct": 1.35,
-  "training_minutes": 20.5,
+  "training_minutes": 42.9,
   "cpu_threads": 4,
   "history": [
     {
@@ -31,34 +31,34 @@
       "val_loss": 2.8174
     },
     {
-      "step": 50,
-      "train_loss": 1.2682,
-      "val_loss": 0.2199,
-      "minutes": 4.8
-    },
-    {
       "step": 100,
-      "train_loss": 0.1019,
-      "val_loss": 0.0387,
-      "minutes": 9.4
-    },
-    {
-      "step": 150,
-      "train_loss": 0.0273,
-      "val_loss": 0.0189,
-      "minutes": 13.7
+      "train_loss": 0.6672,
+      "val_loss": 0.0454,
+      "minutes": 12.7
     },
     {
       "step": 200,
-      "train_loss": 0.0158,
-      "val_loss": 0.0142,
-      "minutes": 17.2
+      "train_loss": 0.0258,
+      "val_loss": 0.0123,
+      "minutes": 20.2
     },
     {
-      "step": 250,
-      "train_loss": 0.0126,
-      "val_loss": 0.0135,
-      "minutes": 20.5
+      "step": 300,
+      "train_loss": 0.0106,
+      "val_loss": 0.0091,
+      "minutes": 27.6
+    },
+    {
+      "step": 400,
+      "train_loss": 0.007,
+      "val_loss": 0.0067,
+      "minutes": 35.3
+    },
+    {
+      "step": 500,
+      "train_loss": 0.0062,
+      "val_loss": 0.0063,
+      "minutes": 42.9
     }
   ]
 }
