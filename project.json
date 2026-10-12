@@ -129,31 +129,31 @@
     {
       "name": "Base model and prompts",
       "goal": "The untouched small model doing the task with prompts only, scored.",
-      "status": "doing",
-      "outcome": "",
+      "status": "done",
+      "outcome": "The untouched 135-million-parameter model runs on the CPU and was scored with two prompts on 100 held-out messages. With instructions only it wrote no usable record at all (0 of 100): it answers the customer or apologises instead of routing. With eight worked examples in the prompt it wrote valid JSON every time but picked the right intent for only 12 of 100, often inventing labels that are not on the list. The checks in code caught those invented labels. This is the starting point fine-tuning has to improve on.",
       "steps": [
         {
           "text": "Load the base model on CPU and generate in batches",
-          "done": false
+          "done": true
         },
         {
           "text": "Write the prompt-only and the prompt-with-examples versions",
-          "done": false
+          "done": true
         },
         {
           "text": "Parse and check the generated JSON",
-          "done": false
+          "done": true
         },
         {
           "text": "Score both prompt versions on a test sample",
-          "done": false
+          "done": true
         }
       ]
     },
     {
       "name": "LoRA fine-tuning",
       "goal": "A trained LoRA add-on saved in the repository.",
-      "status": "todo",
+      "status": "doing",
       "outcome": "",
       "steps": [
         {
@@ -295,6 +295,26 @@
         }
       ],
       "at_scale": "The second set is a sample of real recent tickets labelled by the client's team, refreshed regularly, a few hundred messages rather than 60."
+    },
+    {
+      "title": "Which model to fine-tune",
+      "chosen": "SmolLM2-135M-Instruct, an open model with 135 million parameters (Apache 2.0 licence).",
+      "why": "The project has to train and serve on a CPU. A model this small trains in well under an hour without a graphics card and answers in a fraction of a second, and it makes the point of fine-tuning visible: out of the box it cannot do the task at all.",
+      "alternatives": [
+        {
+          "option": "A 1 to 3 billion parameter model such as SmolLM2-1.7B, Phi or Llama 3.2",
+          "why_not": "It would be more accurate on unusual wording, but one training run would take many hours on a CPU. It is the right choice when a graphics card is available."
+        },
+        {
+          "option": "Fine-tune a hosted model through a provider's fine-tuning service",
+          "why_not": "It costs money per training run and per request, the trained weights stay with the provider, and customer text leaves the company. The point of this project is a model the client owns."
+        },
+        {
+          "option": "An encoder model such as DistilBERT with a classification head",
+          "why_not": "It is a strong choice for the label alone, but it cannot write a record or copy an order number, so it would need a second model for extraction."
+        }
+      ],
+      "at_scale": "With a single graphics card the same code trains a model ten to fifty times larger. The LoRA settings and the evaluation stay the same; only the model name and the training time change."
     }
   ],
   "results": [],

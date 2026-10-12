@@ -1,0 +1,832 @@
+{
+  "classic/challenge": {
+    "n": 60,
+    "valid_record_pct": 100.0,
+    "intent_accuracy_pct": 70.0,
+    "category_accuracy_pct": 81.7,
+    "order_number_accuracy_pct": 98.3,
+    "order_number_found_pct": 100.0,
+    "order_number_invented_pct": 2.3,
+    "exact_record_pct": 68.3,
+    "sent_to_review_pct": 0.0,
+    "accepted_exact_pct": 68.3,
+    "n_with_order_number": 16,
+    "top_confusions": [
+      {
+        "expected": "create_account",
+        "got": "registration_problems",
+        "count": 1
+      },
+      {
+        "expected": "create_account",
+        "got": "place_order",
+        "count": 1
+      },
+      {
+        "expected": "delete_account",
+        "got": "recover_password",
+        "count": 1
+      },
+      {
+        "expected": "registration_problems",
+        "got": "check_invoice",
+        "count": 1
+      },
+      {
+        "expected": "switch_account",
+        "got": "delete_account",
+        "count": 1
+      },
+      {
+        "expected": "check_cancellation_fee",
+        "got": "track_refund",
+        "count": 1
+      },
+      {
+        "expected": "delivery_options",
+        "got": "set_up_shipping_address",
+        "count": 1
+      },
+      {
+        "expected": "delivery_period",
+        "got": "track_order",
+        "count": 1
+      }
+    ],
+    "ms_per_message_batched": 0.28,
+    "samples": [
+      {
+        "message": "Hi, first time here. How do I sign up so I can save my basket for later?",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"create_account\", \"order_number\": null}",
+        "output": "{\"category\": \"ACCOUNT\", \"intent\": \"registration_problems\", \"order_number\": null}"
+      },
+      {
+        "message": "my colleague said I need a profile before I can buy anything, where do I make one",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"create_account\", \"order_number\": null}",
+        "output": "{\"category\": \"ORDER\", \"intent\": \"place_order\", \"order_number\": null}"
+      },
+      {
+        "message": "Please erase my profile and everything attached to it, I am not going to shop here again.",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"delete_account\", \"order_number\": null}",
+        "output": "{\"category\": \"ACCOUNT\", \"intent\": \"recover_password\", \"order_number\": null}"
+      },
+      {
+        "message": "how can i close my account for good? dont need it anymore",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"delete_account\", \"order_number\": null}",
+        "output": "{\"category\": \"ACCOUNT\", \"intent\": \"delete_account\", \"order_number\": null}"
+      },
+      {
+        "message": "I moved to a new job and my email changed, where do I update the details on my profile?",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"edit_account\", \"order_number\": null}",
+        "output": "{\"category\": \"ACCOUNT\", \"intent\": \"edit_account\", \"order_number\": null}"
+      }
+    ]
+  },
+  "mock/challenge": {
+    "n": 60,
+    "valid_record_pct": 100.0,
+    "intent_accuracy_pct": 70.0,
+    "category_accuracy_pct": 88.3,
+    "order_number_accuracy_pct": 98.3,
+    "order_number_found_pct": 100.0,
+    "order_number_invented_pct": 2.3,
+    "exact_record_pct": 68.3,
+    "sent_to_review_pct": 0.0,
+    "accepted_exact_pct": 68.3,
+    "n_with_order_number": 16,
+    "top_confusions": [
+      {
+        "expected": "check_invoice",
+        "got": "get_invoice",
+        "count": 2
+      },
+      {
+        "expected": "check_refund_policy",
+        "got": "get_refund",
+        "count": 2
+      },
+      {
+        "expected": "create_account",
+        "got": "edit_account",
+        "count": 1
+      },
+      {
+        "expected": "switch_account",
+        "got": "contact_customer_service",
+        "count": 1
+      },
+      {
+        "expected": "switch_account",
+        "got": "edit_account",
+        "count": 1
+      },
+      {
+        "expected": "check_cancellation_fee",
+        "got": "contact_customer_service",
+        "count": 1
+      },
+      {
+        "expected": "contact_human_agent",
+        "got": "contact_customer_service",
+        "count": 1
+      },
+      {
+        "expected": "delivery_period",
+        "got": "contact_customer_service",
+        "count": 1
+      }
+    ],
+    "ms_per_message_batched": 0.25,
+    "samples": [
+      {
+        "message": "Hi, first time here. How do I sign up so I can save my basket for later?",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"create_account\", \"order_number\": null}",
+        "output": "{\"category\": \"ACCOUNT\", \"intent\": \"create_account\", \"order_number\": null}"
+      },
+      {
+        "message": "my colleague said I need a profile before I can buy anything, where do I make one",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"create_account\", \"order_number\": null}",
+        "output": "{\"category\": \"ACCOUNT\", \"intent\": \"edit_account\", \"order_number\": null}"
+      },
+      {
+        "message": "Please erase my profile and everything attached to it, I am not going to shop here again.",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"delete_account\", \"order_number\": null}",
+        "output": "{\"category\": \"ACCOUNT\", \"intent\": \"delete_account\", \"order_number\": null}"
+      },
+      {
+        "message": "how can i close my account for good? dont need it anymore",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"delete_account\", \"order_number\": null}",
+        "output": "{\"category\": \"ACCOUNT\", \"intent\": \"delete_account\", \"order_number\": null}"
+      },
+      {
+        "message": "I moved to a new job and my email changed, where do I update the details on my profile?",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"edit_account\", \"order_number\": null}",
+        "output": "{\"category\": \"ACCOUNT\", \"intent\": \"edit_account\", \"order_number\": null}"
+      }
+    ]
+  },
+  "lora/challenge": {
+    "n": 60,
+    "valid_record_pct": 100.0,
+    "intent_accuracy_pct": 53.3,
+    "category_accuracy_pct": 70.0,
+    "order_number_accuracy_pct": 88.3,
+    "order_number_found_pct": 56.2,
+    "order_number_invented_pct": 0.0,
+    "exact_record_pct": 48.3,
+    "sent_to_review_pct": 8.3,
+    "accepted_exact_pct": 52.7,
+    "n_with_order_number": 16,
+    "top_confusions": [
+      {
+        "expected": "set_up_shipping_address",
+        "got": "change_shipping_address",
+        "count": 2
+      },
+      {
+        "expected": "create_account",
+        "got": "place_order",
+        "count": 1
+      },
+      {
+        "expected": "edit_account",
+        "got": "review",
+        "count": 1
+      },
+      {
+        "expected": "edit_account",
+        "got": "recover_password",
+        "count": 1
+      },
+      {
+        "expected": "switch_account",
+        "got": "place_order",
+        "count": 1
+      },
+      {
+        "expected": "contact_customer_service",
+        "got": "contact_human_agent",
+        "count": 1
+      },
+      {
+        "expected": "contact_customer_service",
+        "got": "review",
+        "count": 1
+      },
+      {
+        "expected": "delivery_period",
+        "got": "track_order",
+        "count": 1
+      }
+    ],
+    "ms_per_message_batched": 197.39,
+    "samples": [
+      {
+        "message": "Hi, first time here. How do I sign up so I can save my basket for later?",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"create_account\", \"order_number\": null}",
+        "output": "{\"category\": \"ORDER\", \"intent\": \"place_order\", \"order_number\": null}"
+      },
+      {
+        "message": "my colleague said I need a profile before I can buy anything, where do I make one",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"create_account\", \"order_number\": null}",
+        "output": "{\"category\": \"ACCOUNT\", \"intent\": \"create_account\", \"order_number\": null}"
+      },
+      {
+        "message": "Please erase my profile and everything attached to it, I am not going to shop here again.",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"delete_account\", \"order_number\": null}",
+        "output": "{\"category\": \"ACCOUNT\", \"intent\": \"delete_account\", \"order_number\": null}"
+      },
+      {
+        "message": "how can i close my account for good? dont need it anymore",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"delete_account\", \"order_number\": null}",
+        "output": "{\"category\": \"ACCOUNT\", \"intent\": \"delete_account\", \"order_number\": null}"
+      },
+      {
+        "message": "I moved to a new job and my email changed, where do I update the details on my profile?",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"edit_account\", \"order_number\": null}",
+        "output": "{\"category\": \"FEEDBACK\", \"intent\": \"review\", \"order_number\": null}"
+      }
+    ]
+  },
+  "classic/test": {
+    "n": 1000,
+    "valid_record_pct": 100.0,
+    "intent_accuracy_pct": 99.1,
+    "category_accuracy_pct": 99.7,
+    "order_number_accuracy_pct": 96.4,
+    "order_number_found_pct": 100.0,
+    "order_number_invented_pct": 4.0,
+    "exact_record_pct": 95.5,
+    "sent_to_review_pct": 0.0,
+    "accepted_exact_pct": 95.5,
+    "n_with_order_number": 93,
+    "top_confusions": [
+      {
+        "expected": "place_order",
+        "got": "change_order",
+        "count": 2
+      },
+      {
+        "expected": "cancel_order",
+        "got": "change_order",
+        "count": 1
+      },
+      {
+        "expected": "registration_problems",
+        "got": "create_account",
+        "count": 1
+      },
+      {
+        "expected": "delivery_options",
+        "got": "switch_account",
+        "count": 1
+      },
+      {
+        "expected": "place_order",
+        "got": "complaint",
+        "count": 1
+      },
+      {
+        "expected": "create_account",
+        "got": "delete_account",
+        "count": 1
+      },
+      {
+        "expected": "contact_customer_service",
+        "got": "contact_human_agent",
+        "count": 1
+      },
+      {
+        "expected": "get_refund",
+        "got": "change_order",
+        "count": 1
+      }
+    ],
+    "ms_per_message_batched": 0.06,
+    "samples": [
+      {
+        "message": "I would like to ask for compensations",
+        "expected": "{\"category\": \"REFUND\", \"intent\": \"get_refund\", \"order_number\": null}",
+        "output": "{\"category\": \"REFUND\", \"intent\": \"get_refund\", \"order_number\": null}"
+      },
+      {
+        "message": "can you tell me your damn payment methods?",
+        "expected": "{\"category\": \"PAYMENT\", \"intent\": \"check_payment_methods\", \"order_number\": null}",
+        "output": "{\"category\": \"PAYMENT\", \"intent\": \"check_payment_methods\", \"order_number\": null}"
+      },
+      {
+        "message": "have a question about the termination of a Freemiumaccount",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"delete_account\", \"order_number\": null}",
+        "output": "{\"category\": \"ACCOUNT\", \"intent\": \"delete_account\", \"order_number\": null}"
+      },
+      {
+        "message": "I am trying to leave my feedback for a service",
+        "expected": "{\"category\": \"FEEDBACK\", \"intent\": \"review\", \"order_number\": null}",
+        "output": "{\"category\": \"FEEDBACK\", \"intent\": \"review\", \"order_number\": null}"
+      },
+      {
+        "message": "how do i see purchase  38133969 status",
+        "expected": "{\"category\": \"ORDER\", \"intent\": \"track_order\", \"order_number\": \"38133969\"}",
+        "output": "{\"category\": \"ORDER\", \"intent\": \"track_order\", \"order_number\": \"38133969\"}"
+      }
+    ]
+  },
+  "mock/test": {
+    "n": 1000,
+    "valid_record_pct": 100.0,
+    "intent_accuracy_pct": 52.3,
+    "category_accuracy_pct": 79.6,
+    "order_number_accuracy_pct": 96.4,
+    "order_number_found_pct": 100.0,
+    "order_number_invented_pct": 4.0,
+    "exact_record_pct": 50.2,
+    "sent_to_review_pct": 0.0,
+    "accepted_exact_pct": 50.2,
+    "n_with_order_number": 93,
+    "top_confusions": [
+      {
+        "expected": "check_refund_policy",
+        "got": "get_refund",
+        "count": 31
+      },
+      {
+        "expected": "track_order",
+        "got": "place_order",
+        "count": 29
+      },
+      {
+        "expected": "get_refund",
+        "got": "contact_customer_service",
+        "count": 27
+      },
+      {
+        "expected": "complaint",
+        "got": "contact_customer_service",
+        "count": 26
+      },
+      {
+        "expected": "change_order",
+        "got": "place_order",
+        "count": 25
+      },
+      {
+        "expected": "change_shipping_address",
+        "got": "set_up_shipping_address",
+        "count": 22
+      },
+      {
+        "expected": "check_cancellation_fee",
+        "got": "contact_customer_service",
+        "count": 21
+      },
+      {
+        "expected": "registration_problems",
+        "got": "create_account",
+        "count": 21
+      }
+    ],
+    "ms_per_message_batched": 0.02,
+    "samples": [
+      {
+        "message": "I would like to ask for compensations",
+        "expected": "{\"category\": \"REFUND\", \"intent\": \"get_refund\", \"order_number\": null}",
+        "output": "{\"category\": \"CONTACT\", \"intent\": \"contact_customer_service\", \"order_number\": null}"
+      },
+      {
+        "message": "can you tell me your damn payment methods?",
+        "expected": "{\"category\": \"PAYMENT\", \"intent\": \"check_payment_methods\", \"order_number\": null}",
+        "output": "{\"category\": \"PAYMENT\", \"intent\": \"check_payment_methods\", \"order_number\": null}"
+      },
+      {
+        "message": "have a question about the termination of a Freemiumaccount",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"delete_account\", \"order_number\": null}",
+        "output": "{\"category\": \"ACCOUNT\", \"intent\": \"edit_account\", \"order_number\": null}"
+      },
+      {
+        "message": "I am trying to leave my feedback for a service",
+        "expected": "{\"category\": \"FEEDBACK\", \"intent\": \"review\", \"order_number\": null}",
+        "output": "{\"category\": \"FEEDBACK\", \"intent\": \"review\", \"order_number\": null}"
+      },
+      {
+        "message": "how do i see purchase  38133969 status",
+        "expected": "{\"category\": \"ORDER\", \"intent\": \"track_order\", \"order_number\": \"38133969\"}",
+        "output": "{\"category\": \"ORDER\", \"intent\": \"place_order\", \"order_number\": \"38133969\"}"
+      }
+    ]
+  },
+  "lora/test": {
+    "n": 1000,
+    "valid_record_pct": 100.0,
+    "intent_accuracy_pct": 95.7,
+    "category_accuracy_pct": 98.3,
+    "order_number_accuracy_pct": 99.2,
+    "order_number_found_pct": 93.5,
+    "order_number_invented_pct": 0.2,
+    "exact_record_pct": 95.0,
+    "sent_to_review_pct": 0.9,
+    "accepted_exact_pct": 95.9,
+    "n_with_order_number": 93,
+    "top_confusions": [
+      {
+        "expected": "track_refund",
+        "got": "check_refund_policy",
+        "count": 8
+      },
+      {
+        "expected": "track_refund",
+        "got": "get_refund",
+        "count": 2
+      },
+      {
+        "expected": "delivery_options",
+        "got": "place_order",
+        "count": 2
+      },
+      {
+        "expected": "registration_problems",
+        "got": "create_account",
+        "count": 2
+      },
+      {
+        "expected": "check_invoice",
+        "got": "get_invoice",
+        "count": 2
+      },
+      {
+        "expected": "delivery_options",
+        "got": "contact_human_agent",
+        "count": 2
+      },
+      {
+        "expected": "change_shipping_address",
+        "got": "set_up_shipping_address",
+        "count": 2
+      },
+      {
+        "expected": "check_payment_methods",
+        "got": "payment_methods",
+        "count": 1
+      }
+    ],
+    "ms_per_message_batched": 183.91,
+    "samples": [
+      {
+        "message": "I would like to ask for compensations",
+        "expected": "{\"category\": \"REFUND\", \"intent\": \"get_refund\", \"order_number\": null}",
+        "output": "{\"category\": \"REFUND\", \"intent\": \"get_refund\", \"order_number\": null}"
+      },
+      {
+        "message": "can you tell me your damn payment methods?",
+        "expected": "{\"category\": \"PAYMENT\", \"intent\": \"check_payment_methods\", \"order_number\": null}",
+        "output": "{\"category\": \"PAYMENT\", \"intent\": \"payment_methods\", \"order_number\": null}"
+      },
+      {
+        "message": "have a question about the termination of a Freemiumaccount",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"delete_account\", \"order_number\": null}",
+        "output": "{\"category\": \"ACCOUNT\", \"intent\": \"delete_account\", \"order_number\": null}"
+      },
+      {
+        "message": "I am trying to leave my feedback for a service",
+        "expected": "{\"category\": \"FEEDBACK\", \"intent\": \"review\", \"order_number\": null}",
+        "output": "{\"category\": \"FEEDBACK\", \"intent\": \"review\", \"order_number\": null}"
+      },
+      {
+        "message": "how do i see purchase  38133969 status",
+        "expected": "{\"category\": \"ORDER\", \"intent\": \"track_order\", \"order_number\": \"38133969\"}",
+        "output": "{\"category\": \"ORDER\", \"intent\": \"track_order\", \"order_number\": \"38133969\"}"
+      }
+    ]
+  },
+  "base-prompt/challenge": {
+    "n": 60,
+    "valid_record_pct": 0.0,
+    "intent_accuracy_pct": 0.0,
+    "category_accuracy_pct": 0.0,
+    "order_number_accuracy_pct": 0.0,
+    "order_number_found_pct": 0.0,
+    "order_number_invented_pct": 0.0,
+    "exact_record_pct": 0.0,
+    "sent_to_review_pct": 100.0,
+    "accepted_exact_pct": null,
+    "n_with_order_number": 16,
+    "top_confusions": [
+      {
+        "expected": "track_order",
+        "got": "(no valid record)",
+        "count": 4
+      },
+      {
+        "expected": "contact_human_agent",
+        "got": "(no valid record)",
+        "count": 3
+      },
+      {
+        "expected": "complaint",
+        "got": "(no valid record)",
+        "count": 3
+      },
+      {
+        "expected": "get_invoice",
+        "got": "(no valid record)",
+        "count": 3
+      },
+      {
+        "expected": "cancel_order",
+        "got": "(no valid record)",
+        "count": 3
+      },
+      {
+        "expected": "create_account",
+        "got": "(no valid record)",
+        "count": 2
+      },
+      {
+        "expected": "delete_account",
+        "got": "(no valid record)",
+        "count": 2
+      },
+      {
+        "expected": "edit_account",
+        "got": "(no valid record)",
+        "count": 2
+      }
+    ],
+    "ms_per_message_batched": 1445.16,
+    "samples": [
+      {
+        "message": "Hi, first time here. How do I sign up so I can save my basket for later?",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"create_account\", \"order_number\": null}",
+        "output": "To sign up for your account, you'll need to provide your email address and password. Here's how to do it:\n\n1. Open your web browser and go to the \"Sign Up\" or \"Sign In\" page."
+      },
+      {
+        "message": "my colleague said I need a profile before I can buy anything, where do I make one",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"create_account\", \"order_number\": null}",
+        "output": "To create a profile for your business, you'll need to provide a unique identifier, such as a username or email address, and a set of details that describe your business. Here are the steps to create a"
+      },
+      {
+        "message": "Please erase my profile and everything attached to it, I am not going to shop here again.",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"delete_account\", \"order_number\": null}",
+        "output": "I'm sorry for the inconvenience, but as an AI, I don't have the ability to erase your profile or any other personal data. I'm here to assist you with your inquiries and provide assistance. If you have"
+      },
+      {
+        "message": "how can i close my account for good? dont need it anymore",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"delete_account\", \"order_number\": null}",
+        "output": "To close your account for good, you need to provide the following information:\n\n1. Your account number (account number)\n2. Your account name (account name)\n3. Your account type (account type)\n4."
+      },
+      {
+        "message": "I moved to a new job and my email changed, where do I update the details on my profile?",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"edit_account\", \"order_number\": null}",
+        "output": "To update your email address on your profile, you can use the following steps:\n\n1. Open your web browser and navigate to your new job's website.\n2. Click on the \"Sign in\" or \"Log in\" button"
+      }
+    ]
+  },
+  "base-examples/challenge": {
+    "n": 60,
+    "valid_record_pct": 98.3,
+    "intent_accuracy_pct": 16.7,
+    "category_accuracy_pct": 8.3,
+    "order_number_accuracy_pct": 70.0,
+    "order_number_found_pct": 6.2,
+    "order_number_invented_pct": 6.8,
+    "exact_record_pct": 1.7,
+    "sent_to_review_pct": 95.0,
+    "accepted_exact_pct": 33.3,
+    "n_with_order_number": 16,
+    "top_confusions": [
+      {
+        "expected": "recover_password",
+        "got": "track_refund",
+        "count": 2
+      },
+      {
+        "expected": "switch_account",
+        "got": "edit_account",
+        "count": 2
+      },
+      {
+        "expected": "check_cancellation_fee",
+        "got": "contact_human_agent",
+        "count": 2
+      },
+      {
+        "expected": "create_account",
+        "got": "sign_up",
+        "count": 1
+      },
+      {
+        "expected": "create_account",
+        "got": "edit_profile",
+        "count": 1
+      },
+      {
+        "expected": "delete_account",
+        "got": "delete_profile",
+        "count": 1
+      },
+      {
+        "expected": "delete_account",
+        "got": "close_account",
+        "count": 1
+      },
+      {
+        "expected": "edit_account",
+        "got": "update_profile",
+        "count": 1
+      }
+    ],
+    "ms_per_message_batched": 2594.88,
+    "samples": [
+      {
+        "message": "Hi, first time here. How do I sign up so I can save my basket for later?",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"create_account\", \"order_number\": null}",
+        "output": "{\"category\": \"FAVORITE\", \"intent\": \"sign_up\", \"order_number\": null}"
+      },
+      {
+        "message": "my colleague said I need a profile before I can buy anything, where do I make one",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"create_account\", \"order_number\": null}",
+        "output": "{\"category\": \"PROFILE\", \"intent\": \"edit_profile\", \"order_number\": null}"
+      },
+      {
+        "message": "Please erase my profile and everything attached to it, I am not going to shop here again.",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"delete_account\", \"order_number\": null}",
+        "output": "{\"category\": \"REMOVE\", \"intent\": \"delete_profile\", \"order_number\": null}"
+      },
+      {
+        "message": "how can i close my account for good? dont need it anymore",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"delete_account\", \"order_number\": null}",
+        "output": "{\"category\": \"CONTACT\", \"intent\": \"close_account\", \"order_number\": null}"
+      },
+      {
+        "message": "I moved to a new job and my email changed, where do I update the details on my profile?",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"edit_account\", \"order_number\": null}",
+        "output": "{\"category\": \"EMAIL\", \"intent\": \"update_profile\", \"order_number\": null}"
+      }
+    ]
+  },
+  "base-prompt/test": {
+    "n": 100,
+    "valid_record_pct": 0.0,
+    "intent_accuracy_pct": 0.0,
+    "category_accuracy_pct": 0.0,
+    "order_number_accuracy_pct": 0.0,
+    "order_number_found_pct": 0.0,
+    "order_number_invented_pct": 0.0,
+    "exact_record_pct": 0.0,
+    "sent_to_review_pct": 100.0,
+    "accepted_exact_pct": null,
+    "n_with_order_number": 11,
+    "top_confusions": [
+      {
+        "expected": "delete_account",
+        "got": "(no valid record)",
+        "count": 7
+      },
+      {
+        "expected": "review",
+        "got": "(no valid record)",
+        "count": 7
+      },
+      {
+        "expected": "check_cancellation_fee",
+        "got": "(no valid record)",
+        "count": 7
+      },
+      {
+        "expected": "newsletter_subscription",
+        "got": "(no valid record)",
+        "count": 7
+      },
+      {
+        "expected": "change_order",
+        "got": "(no valid record)",
+        "count": 6
+      },
+      {
+        "expected": "recover_password",
+        "got": "(no valid record)",
+        "count": 6
+      },
+      {
+        "expected": "create_account",
+        "got": "(no valid record)",
+        "count": 5
+      },
+      {
+        "expected": "track_refund",
+        "got": "(no valid record)",
+        "count": 5
+      }
+    ],
+    "ms_per_message_batched": 1379.21,
+    "samples": [
+      {
+        "message": "I would like to ask for compensations",
+        "expected": "{\"category\": \"REFUND\", \"intent\": \"get_refund\", \"order_number\": null}",
+        "output": "I'm sorry for any misunderstanding, but as an AI, I don't have the ability to access or process sensitive information. I'm designed to respect user privacy and confidentiality. I'm here to assist you "
+      },
+      {
+        "message": "can you tell me your damn payment methods?",
+        "expected": "{\"category\": \"PAYMENT\", \"intent\": \"check_payment_methods\", \"order_number\": null}",
+        "output": "I'm sorry for the confusion, but as a text-based AI, I don't have access to real-time payment methods or databases. I'm designed to provide responses in JSON format, so I can't help you with that."
+      },
+      {
+        "message": "have a question about the termination of a Freemiumaccount",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"delete_account\", \"order_number\": null}",
+        "output": "I'm sorry for any confusion, but as an AI, I don't have the ability to access or interact with the internet. I'm here to assist you with your questions or problems related to your Freemiumaccount. If "
+      },
+      {
+        "message": "I am trying to leave my feedback for a service",
+        "expected": "{\"category\": \"FEEDBACK\", \"intent\": \"review\", \"order_number\": null}",
+        "output": "You can use the following JSON object to leave your feedback:\n\n```json\n{\n  \"category\": \"intents\",\n  \"intent\": \"check_cancellation_fee\",\n  \"intent_reason\": \""
+      },
+      {
+        "message": "how do i see purchase  38133969 status",
+        "expected": "{\"category\": \"ORDER\", \"intent\": \"track_order\", \"order_number\": \"38133969\"}",
+        "output": "To see the purchase status of a customer, you can use the following methods:\n\n1. **Customer Service**:\n   - **Customer Service**:\n   - **Customer Service**:\n   - **Customer Service**:\n   - **Customer "
+      }
+    ]
+  },
+  "base-examples/test": {
+    "n": 100,
+    "valid_record_pct": 100.0,
+    "intent_accuracy_pct": 12.0,
+    "category_accuracy_pct": 24.0,
+    "order_number_accuracy_pct": 90.0,
+    "order_number_found_pct": 18.2,
+    "order_number_invented_pct": 1.1,
+    "exact_record_pct": 8.0,
+    "sent_to_review_pct": 75.0,
+    "accepted_exact_pct": 32.0,
+    "n_with_order_number": 11,
+    "top_confusions": [
+      {
+        "expected": "review",
+        "got": "feedback",
+        "count": 5
+      },
+      {
+        "expected": "check_cancellation_fee",
+        "got": "track_refund",
+        "count": 2
+      },
+      {
+        "expected": "delivery_period",
+        "got": "check_order_date",
+        "count": 2
+      },
+      {
+        "expected": "newsletter_subscription",
+        "got": "unsubscribe",
+        "count": 2
+      },
+      {
+        "expected": "track_refund",
+        "got": "track_recovery",
+        "count": 2
+      },
+      {
+        "expected": "get_refund",
+        "got": "check_payment_methods",
+        "count": 1
+      },
+      {
+        "expected": "delete_account",
+        "got": "termination",
+        "count": 1
+      },
+      {
+        "expected": "track_order",
+        "got": "review",
+        "count": 1
+      }
+    ],
+    "ms_per_message_batched": 2789.6,
+    "samples": [
+      {
+        "message": "I would like to ask for compensations",
+        "expected": "{\"category\": \"REFUND\", \"intent\": \"get_refund\", \"order_number\": null}",
+        "output": "{\"category\": \"PAYMENT\", \"intent\": \"check_payment_methods\", \"order_number\": null}"
+      },
+      {
+        "message": "can you tell me your damn payment methods?",
+        "expected": "{\"category\": \"PAYMENT\", \"intent\": \"check_payment_methods\", \"order_number\": null}",
+        "output": "{\"category\": \"PAYMENT\", \"intent\": \"check_payment_methods\", \"order_number\": null}"
+      },
+      {
+        "message": "have a question about the termination of a Freemiumaccount",
+        "expected": "{\"category\": \"ACCOUNT\", \"intent\": \"delete_account\", \"order_number\": null}",
+        "output": "{\"category\": \"FEEDBACK\", \"intent\": \"termination\", \"order_number\": null}"
+      },
+      {
+        "message": "I am trying to leave my feedback for a service",
+        "expected": "{\"category\": \"FEEDBACK\", \"intent\": \"review\", \"order_number\": null}",
+        "output": "{\"category\": \"FEEDBACK\", \"intent\": \"feedback\", \"order_number\": null}"
+      },
+      {
+        "message": "how do i see purchase  38133969 status",
+        "expected": "{\"category\": \"ORDER\", \"intent\": \"track_order\", \"order_number\": \"38133969\"}",
+        "output": "{\"category\": \"RECOVER\", \"intent\": \"review\", \"order_number\": null}"
+      }
+    ]
+  }
+}

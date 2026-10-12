@@ -1,0 +1,64 @@
+{
+  "config": {
+    "rank": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj"
+    ],
+    "epochs": 1.0,
+    "batch_size": 16,
+    "learning_rate": 0.0005,
+    "warmup_steps": 30,
+    "max_length": 160,
+    "eval_every": 50,
+    "seed": 7
+  },
+  "train_examples": 4000,
+  "val_examples": 300,
+  "steps": 250,
+  "trainable_parameters": 1843200,
+  "total_parameters": 136358208,
+  "trainable_pct": 1.35,
+  "training_minutes": 20.5,
+  "cpu_threads": 4,
+  "history": [
+    {
+      "step": 0,
+      "val_loss": 2.8174
+    },
+    {
+      "step": 50,
+      "train_loss": 1.2682,
+      "val_loss": 0.2199,
+      "minutes": 4.8
+    },
+    {
+      "step": 100,
+      "train_loss": 0.1019,
+      "val_loss": 0.0387,
+      "minutes": 9.4
+    },
+    {
+      "step": 150,
+      "train_loss": 0.0273,
+      "val_loss": 0.0189,
+      "minutes": 13.7
+    },
+    {
+      "step": 200,
+      "train_loss": 0.0158,
+      "val_loss": 0.0142,
+      "minutes": 17.2
+    },
+    {
+      "step": 250,
+      "train_loss": 0.0126,
+      "val_loss": 0.0135,
+      "minutes": 20.5
+    }
+  ]
+}

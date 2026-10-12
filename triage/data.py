@@ -72,6 +72,47 @@ def fill_placeholders(text: str, rng: random.Random) -> tuple[str, str | None]:
     return re.sub(r"\{\{(.*?)\}\}", replace, text), order_number
 
 
+# Sentences that mention an order number without saying what the customer wants. In the source
+# dataset an order number only ever appears inside a few intents (cancel, change, track...), so
+# a model trained on it learns "this intent has a number" instead of "copy the number".
+_ORDER_MENTIONS = [
+    "My order number is {n}.", "This is about order {n}.", "Order {n}.", "(order {n})",
+    "It concerns purchase {n}.", "ref {n}", "The order is {n}.", "order no. {n}",
+    "I am writing about order {n}.", "Order reference: {n}.",
+]
+# Numbers that are not order numbers. They teach the model that a number alone is not enough.
+_DISTRACTORS = [
+    "My phone number is {p}.", "You can call me on {p}.", "My customer ID is {c}.",
+    "My postcode is {c}.", "I already wrote to you {d} times.", "Invoice INV-{c} is attached.",
+]
+
+
+def augment(examples: list[dict], seed: int = 7, p_order: float = 0.15, p_distractor: float = 0.06) -> list[dict]:
+    """Add order-number mentions and unrelated numbers to messages that have neither.
+
+    Applied to the training set only. The validation and test sets stay exactly as the source
+    dataset gives them, so scores before and after this change are comparable.
+    """
+    rng = random.Random(seed + 1)
+    out: list[dict] = []
+    for ex in examples:
+        roll = rng.random()
+        if ex["order_number"] is not None or roll >= p_order + p_distractor:
+            out.append(ex)
+            continue
+        if roll < p_order:
+            number = make_order_number(rng)
+            extra = rng.choice(_ORDER_MENTIONS).format(n=number)
+        else:
+            number = None
+            extra = rng.choice(_DISTRACTORS).format(
+                p=f"555 {rng.randrange(1000, 9999)}", c=rng.randrange(10000, 99999), d=rng.randrange(2, 6)
+            )
+        message = f"{extra} {ex['message']}" if rng.random() < 0.4 else f"{ex['message']} {extra}"
+        out.append(make_example(message, ex["intent"], number))
+    return out
+
+
 def make_example(message: str, intent: str, order_number: str | None) -> dict:
     category = INTENT_TO_CATEGORY[intent]
     return {
@@ -122,16 +163,18 @@ def read_jsonl(path: Path) -> list[dict]:
         return [json.loads(line) for line in fh if line.strip()]
 
 
-def prepare(n_train: int = 4000, n_val: int = 300, n_test: int = 1000, seed: int = 7) -> dict[str, int]:
+def prepare(n_train: int = 8000, n_val: int = 300, n_test: int = 1000, seed: int = 7) -> dict[str, int]:
     """Download the dataset and write data/train.jsonl, val.jsonl and test.jsonl."""
     from datasets import load_dataset  # imported here so tests never need the network
 
     rows = list(load_dataset(DATASET, split="train"))
     examples = build_examples(rows, seed)
     splits = split_examples(examples, n_train, n_val, n_test, seed)
+    splits["train"] = augment(splits["train"], seed)
     for name, part in splits.items():
         write_jsonl(DATA_DIR / f"{name}.jsonl", part)
     counts = {name: len(part) for name, part in splits.items()}
+    counts["train_with_order_number"] = sum(1 for ex in splits["train"] if ex["order_number"])
     counts["unique_messages"] = len(examples)
     counts["source_rows"] = len(rows)
     return counts
