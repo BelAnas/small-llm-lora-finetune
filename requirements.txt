@@ -1,0 +1,13 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.14.1+cpu
+transformers==5.19.0
+peft==0.21.2
+datasets==5.1.0
+accelerate==1.15.0
+scikit-learn==1.9.1
+pydantic==2.14.1
+fastapi==0.143.0
+uvicorn==0.54.0
+httpx==0.28.1
+openai==3.29.0
+pytest==9.1.1

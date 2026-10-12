@@ -1,0 +1,314 @@
+{
+  "id": 10,
+  "slug": "lora-finetune",
+  "repo": "small-llm-lora-finetune",
+  "title": "Fine-tuning a small language model with LoRA",
+  "tagline": "A 135-million-parameter open language model fine-tuned with LoRA on a CPU to turn customer messages into routing JSON, measured against the same model with prompts only and against a classic classifier.",
+  "category": "Fine-tuning",
+  "status": "building",
+  "started": "2026-10-12",
+  "finished": "",
+  "pitch": "I took a very small open language model, one that runs on an ordinary server with no graphics card, and trained it on a public set of customer support messages so that it reads a message and returns a small JSON record: the category, the customer's intent and the order number if there is one. I did not stop at 'it trained'. I measured the fine-tuned model against the same model with a carefully written prompt, against the same model with examples in the prompt, and against a classic classifier, on a held-out test set and on messages I wrote by hand in a different style. So I can show you when fine-tuning is worth paying for and when it is not.",
+  "problem": "A support team receives thousands of messages and each one has to be routed: what is it about, what does the customer want, and which order does it concern. A large hosted model can do this, but it costs money on every message, adds a network round trip, and sends customer text to a third party. A small model that runs on the company's own server is cheap and private, but out of the box it does not follow the company's label list or output format reliably.",
+  "solution": "A small open model (SmolLM2, 135 million parameters) is fine-tuned with LoRA, a method that leaves the original model frozen and trains a small add-on of extra weights. The training data is a public customer-support dataset turned into message and JSON pairs by a script. After training, the model reads a message and writes one JSON record with the category, the intent and the order number. Code checks every record before it is used: the labels must come from the approved list and the order number must literally appear in the message, otherwise the message is sent to a person. An evaluation script scores four systems on the same messages, so the gain from fine-tuning is a measured number and not a claim.",
+  "features": [
+    "LoRA fine-tuning of a small open language model that runs entirely on a CPU",
+    "A data script that turns a public customer-support dataset into message and JSON training pairs, with a fixed seed",
+    "Four systems scored on the same messages: prompt only, prompt with examples, fine-tuned, and a classic classifier",
+    "A held-out test set and a separate hand-written set in a different style, to show how the model does on wording it has not seen",
+    "Output checking in code: labels must be on the approved list and an order number must appear in the message",
+    "A small web API and a command line tool that route one message, with a review flag when the output fails a check",
+    "An offline provider with no model download, used by the tests"
+  ],
+  "stack": [
+    {
+      "name": "Python 3.12",
+      "role": "The whole project.",
+      "why": "The fine-tuning libraries are Python first."
+    },
+    {
+      "name": "PyTorch (CPU build)",
+      "role": "Runs and trains the model.",
+      "why": "It is what Transformers and PEFT are built on, and the CPU build installs without a graphics card."
+    },
+    {
+      "name": "Hugging Face Transformers",
+      "role": "Loads the base model and its tokenizer and generates text.",
+      "why": "It is the standard way to load open models, so the same code works for a larger model later."
+    },
+    {
+      "name": "PEFT (LoRA)",
+      "role": "Adds the small trainable add-on to the frozen model and saves it.",
+      "why": "It is the reference implementation of LoRA and saves the add-on as a few megabytes instead of a full model copy."
+    },
+    {
+      "name": "Hugging Face Datasets",
+      "role": "Downloads the public customer-support dataset.",
+      "why": "One line to fetch a versioned public dataset."
+    },
+    {
+      "name": "scikit-learn",
+      "role": "The classic classifier used as a reference point.",
+      "why": "A TF-IDF and logistic regression model takes seconds to train and shows what a much simpler tool achieves."
+    },
+    {
+      "name": "Pydantic",
+      "role": "Checks the JSON the model writes.",
+      "why": "The output either matches the schema or is rejected, with no hand-written parsing rules."
+    },
+    {
+      "name": "FastAPI",
+      "role": "The web API that routes a message.",
+      "why": "A small typed API with automatic documentation."
+    },
+    {
+      "name": "pytest",
+      "role": "The automated tests.",
+      "why": "The standard Python test tool."
+    }
+  ],
+  "workflow": [
+    {
+      "step": "Collect",
+      "detail": "A script downloads a public customer-support dataset of messages labelled with a category and an intent."
+    },
+    {
+      "step": "Prepare",
+      "detail": "Placeholders such as the order number are filled with invented values, duplicates are removed, and each message is paired with the JSON record the model should write. The pairs are split into training, validation and test sets."
+    },
+    {
+      "step": "Baseline",
+      "detail": "The untouched base model is asked to do the task with a prompt, then with a prompt that includes examples. A classic classifier is trained as a reference."
+    },
+    {
+      "step": "Fine-tune",
+      "detail": "LoRA trains a small add-on on the training pairs while the base model stays frozen. Only the JSON part of each example counts towards the loss."
+    },
+    {
+      "step": "Check",
+      "detail": "Every generated record is parsed and checked: valid JSON, labels from the approved list, order number present in the message."
+    },
+    {
+      "step": "Evaluate",
+      "detail": "All systems are scored on the same held-out messages and on a hand-written set, and the numbers go into a report file."
+    },
+    {
+      "step": "Serve",
+      "detail": "The API loads the base model with the add-on merged in, routes a message, and flags it for a person when a check fails."
+    }
+  ],
+  "phases": [
+    {
+      "name": "Foundation",
+      "goal": "A repository that runs, with prepared data and a classic reference model.",
+      "status": "done",
+      "outcome": "A git repository with pinned dependencies and a settings module. The data script downloads the public Bitext customer-support dataset (26,872 rows), removes repeated messages (24,274 remain), fills placeholders such as the order number with invented values, and writes 4,000 training, 300 validation and 1,000 test pairs of message and JSON record. A second set of 60 messages was written by hand in a different style, 16 of them with an order number. The checks on the model's output and the scorer are written. A classic classifier trained in 9 seconds already gets 99.1% of intents right on the test set but only 70.0% on the hand-written set, which is the reference the language model has to be judged against.",
+      "steps": [
+        {
+          "text": "Create the repository skeleton, pinned requirements, settings, .gitignore, .env.example and licence",
+          "done": true
+        },
+        {
+          "text": "Define the label list (11 categories, 27 intents) and the output schema",
+          "done": true
+        },
+        {
+          "text": "Write the data script: download the public dataset, fill placeholders, remove duplicates, split",
+          "done": true
+        },
+        {
+          "text": "Write a hand-written challenge set in a different style",
+          "done": true
+        },
+        {
+          "text": "Train and score the classic TF-IDF classifier as a reference",
+          "done": true
+        }
+      ]
+    },
+    {
+      "name": "Base model and prompts",
+      "goal": "The untouched small model doing the task with prompts only, scored.",
+      "status": "doing",
+      "outcome": "",
+      "steps": [
+        {
+          "text": "Load the base model on CPU and generate in batches",
+          "done": false
+        },
+        {
+          "text": "Write the prompt-only and the prompt-with-examples versions",
+          "done": false
+        },
+        {
+          "text": "Parse and check the generated JSON",
+          "done": false
+        },
+        {
+          "text": "Score both prompt versions on a test sample",
+          "done": false
+        }
+      ]
+    },
+    {
+      "name": "LoRA fine-tuning",
+      "goal": "A trained LoRA add-on saved in the repository.",
+      "status": "todo",
+      "outcome": "",
+      "steps": [
+        {
+          "text": "Build training examples where only the JSON answer counts towards the loss",
+          "done": false
+        },
+        {
+          "text": "Write the training loop with validation loss and a saved loss log",
+          "done": false
+        },
+        {
+          "text": "Train on CPU and save the add-on",
+          "done": false
+        },
+        {
+          "text": "Check that the saved add-on loads and gives the same answers when merged into the base model",
+          "done": false
+        }
+      ]
+    },
+    {
+      "name": "Evaluation",
+      "goal": "One report that compares all systems on the same messages.",
+      "status": "todo",
+      "outcome": "",
+      "steps": [
+        {
+          "text": "Score the fine-tuned model on the full test set and the challenge set",
+          "done": false
+        },
+        {
+          "text": "Measure speed per message for each system",
+          "done": false
+        },
+        {
+          "text": "List the most common mistakes of the fine-tuned model",
+          "done": false
+        },
+        {
+          "text": "Write the report file and the comparison table",
+          "done": false
+        }
+      ]
+    },
+    {
+      "name": "Interface",
+      "goal": "A message can be routed from the command line and over HTTP.",
+      "status": "todo",
+      "outcome": "",
+      "steps": [
+        {
+          "text": "Providers: offline rules, local fine-tuned model, optional hosted model",
+          "done": false
+        },
+        {
+          "text": "FastAPI endpoint with the review flag",
+          "done": false
+        },
+        {
+          "text": "Command line: data, train, evaluate, route, serve",
+          "done": false
+        },
+        {
+          "text": "Run the API and route real messages",
+          "done": false
+        }
+      ]
+    },
+    {
+      "name": "Verification and documentation",
+      "goal": "Tests pass offline, the numbers are recorded, and a client can read the repository.",
+      "status": "todo",
+      "outcome": "",
+      "steps": [
+        {
+          "text": "Automated tests that run with no network and no key",
+          "done": false
+        },
+        {
+          "text": "Run from a fresh clone the way the README says",
+          "done": false
+        },
+        {
+          "text": "Hosted-model comparison if a key is available",
+          "done": false
+        },
+        {
+          "text": "README with diagram, real output and results table",
+          "done": false
+        },
+        {
+          "text": "Complete the dashboard entry",
+          "done": false
+        }
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "title": "What task to fine-tune for",
+      "chosen": "Routing a customer support message into a JSON record: category, intent and the order number copied from the message.",
+      "why": "It is a task clients actually pay for, the answer is either right or wrong so it can be measured exactly, and it has two parts that test different things: choosing a label from a fixed list, and copying a value out of the text. The record is short, so a small model can learn it on a CPU.",
+      "alternatives": [
+        {
+          "option": "Fine-tune the model to write full support replies",
+          "why_not": "The quality of free text cannot be scored without a human or a second model as judge, so the result would be an opinion and not a number. Training on long replies would also take hours on a CPU."
+        },
+        {
+          "option": "Plain intent classification with no JSON and no extraction",
+          "why_not": "A classic classifier does that in microseconds. Fine-tuning a language model for it would be the wrong tool and an honest comparison would say so."
+        }
+      ],
+      "at_scale": "The label list and the fields come from the client's own ticket system, and more fields are added (product, urgency, language). The method stays the same."
+    },
+    {
+      "title": "Where the data comes from",
+      "chosen": "The public Bitext customer-support dataset from the Hugging Face Hub, with placeholders filled by a seeded script.",
+      "why": "It is public, large enough (about 1,000 messages for each of 27 intents), covers a neutral retail support domain, and its licence allows reuse. Filling the order-number placeholder with invented numbers in six different shapes turns it into a real extraction task.",
+      "alternatives": [
+        {
+          "option": "Generate all training data with a large hosted model",
+          "why_not": "It costs money, cannot be reproduced exactly by a stranger, and trains the small model on another model's habits."
+        },
+        {
+          "option": "A banking intent dataset such as Banking77",
+          "why_not": "It is the best-known intent dataset but its subject is banking, which this portfolio does not cover."
+        }
+      ],
+      "at_scale": "A client's own past tickets with the labels their agents assigned are the training data, after personal details are removed. A few hundred labelled examples per intent is a reasonable start."
+    },
+    {
+      "title": "How to test honestly when the dataset is repetitive",
+      "chosen": "Two test sets: 1,000 held-out messages from the dataset, and 60 messages written by hand in a different style.",
+      "why": "The public dataset was produced from templates, so a held-out message often looks very like a training message and scores on it are flattering for every system. The hand-written set uses wording the model never saw, and it is where the systems separate.",
+      "alternatives": [
+        {
+          "option": "Report only the held-out test set",
+          "why_not": "Every trained system scores about 99% there, which says more about the dataset than about the systems."
+        }
+      ],
+      "at_scale": "The second set is a sample of real recent tickets labelled by the client's team, refreshed regularly, a few hundred messages rather than 60."
+    }
+  ],
+  "results": [],
+  "client_qa": [],
+  "concepts": [],
+  "keywords": [],
+  "topics": [],
+  "limits": [],
+  "run": [],
+  "files": [],
+  "verification": {
+    "tests": "",
+    "live_llm": "pending",
+    "cost_usd": 0,
+    "notes": ""
+  }
+}
