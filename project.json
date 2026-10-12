@@ -5,9 +5,9 @@
   "title": "Fine-tuning a small language model with LoRA",
   "tagline": "A 135-million-parameter open language model fine-tuned with LoRA on a CPU to turn customer messages into routing JSON, measured against the same model with prompts only and against a classic classifier.",
   "category": "Fine-tuning",
-  "status": "building",
+  "status": "done",
   "started": "2026-10-12",
-  "finished": "",
+  "finished": "2026-10-12",
   "pitch": "I took a very small open language model, one that runs on an ordinary server with no graphics card, and trained it on a public set of customer support messages so that it reads a message and returns a small JSON record: the category, the customer's intent and the order number if there is one. I did not stop at 'it trained'. I measured the fine-tuned model against the same model with a carefully written prompt, against the same model with examples in the prompt, and against a classic classifier, on a held-out test set and on messages I wrote by hand in a different style. So I can show you when fine-tuning is worth paying for and when it is not.",
   "problem": "A support team receives thousands of messages and each one has to be routed: what is it about, what does the customer want, and which order does it concern. A large hosted model can do this, but it costs money on every message, adds a network round trip, and sends customer text to a third party. A small model that runs on the company's own server is cheap and private, but out of the box it does not follow the company's label list or output format reliably.",
   "solution": "A small open model (SmolLM2, 135 million parameters) is fine-tuned with LoRA, a method that leaves the original model frozen and trains a small add-on of extra weights. The training data is a public customer-support dataset turned into message and JSON pairs by a script. After training, the model reads a message and writes one JSON record with the category, the intent and the order number. Code checks every record before it is used: the labels must come from the approved list and the order number must literally appear in the message, otherwise the message is sent to a person. An evaluation script scores four systems on the same messages, so the gain from fine-tuning is a measured number and not a claim.",
@@ -153,88 +153,88 @@
     {
       "name": "LoRA fine-tuning",
       "goal": "A trained LoRA add-on saved in the repository.",
-      "status": "doing",
-      "outcome": "",
+      "status": "done",
+      "outcome": "A trained LoRA add-on of 7.4 MB is saved in the adapter folder with its loss log. It trains 1,843,200 extra weights, 1.35% of the model, and leaves the 134.5 million original weights frozen. Two runs were made. The first (4,000 examples, 250 steps, 20.5 minutes) reached 95.7% of intents on the test set but only 53.3% on the hand-written set and found only 56.2% of the order numbers there. The cause was in the data: order numbers only appeared inside a few intents. The data script was changed to add order-number mentions and unrelated numbers to training messages of every intent, and the second run (8,000 examples, 500 steps, 42.9 minutes) took the validation loss from 2.8174 to 0.0063. A test trains LoRA on a tiny model built in memory and confirms that the merged model gives the same answers as the unmerged one.",
       "steps": [
         {
           "text": "Build training examples where only the JSON answer counts towards the loss",
-          "done": false
+          "done": true
         },
         {
           "text": "Write the training loop with validation loss and a saved loss log",
-          "done": false
+          "done": true
         },
         {
           "text": "Train on CPU and save the add-on",
-          "done": false
+          "done": true
         },
         {
           "text": "Check that the saved add-on loads and gives the same answers when merged into the base model",
-          "done": false
+          "done": true
         }
       ]
     },
     {
       "name": "Evaluation",
       "goal": "One report that compares all systems on the same messages.",
-      "status": "todo",
-      "outcome": "",
+      "status": "done",
+      "outcome": "One report file (evals/report.json) holds the scores of five systems on both sets, with sample outputs. On 1,000 held-out messages the fine-tuned model gets 97.6% of intents and 97.4% of whole records right; the classic classifier gets 99.1% of intents and 95.5% of whole records. On the 60 hand-written messages the fine-tuned model gets 66.7% of intents and the classic classifier 73.3%. The untouched base model gets 0% with instructions only and 12% with examples in the prompt. The fine-tuned model's most common mistakes are between neighbouring intents, such as changing versus setting up a shipping address. One message at a time it takes a median of 1,059 ms on the CPU.",
       "steps": [
         {
           "text": "Score the fine-tuned model on the full test set and the challenge set",
-          "done": false
+          "done": true
         },
         {
           "text": "Measure speed per message for each system",
-          "done": false
+          "done": true
         },
         {
           "text": "List the most common mistakes of the fine-tuned model",
-          "done": false
+          "done": true
         },
         {
           "text": "Write the report file and the comparison table",
-          "done": false
+          "done": true
         }
       ]
     },
     {
       "name": "Interface",
       "goal": "A message can be routed from the command line and over HTTP.",
-      "status": "todo",
-      "outcome": "",
+      "status": "done",
+      "outcome": "The command `python -m triage.cli serve` starts a web API on port 8540. It was started and five real messages were sent to it: four were routed correctly with the right order number, including one that also contained a phone number, and an off-topic question about the weather was wrongly routed to a delivery intent, which is recorded as a limit. The same routing is available from the command line, and a setting switches between the fine-tuned model, offline keyword rules and a hosted model.",
       "steps": [
         {
           "text": "Providers: offline rules, local fine-tuned model, optional hosted model",
-          "done": false
+          "done": true
         },
         {
           "text": "FastAPI endpoint with the review flag",
-          "done": false
+          "done": true
         },
         {
           "text": "Command line: data, train, evaluate, route, serve",
-          "done": false
+          "done": true
         },
         {
           "text": "Run the API and route real messages",
-          "done": false
+          "done": true
         }
       ]
     },
     {
       "name": "Verification and documentation",
       "goal": "Tests pass offline, the numbers are recorded, and a client can read the repository.",
-      "status": "todo",
-      "outcome": "",
+      "status": "done",
+      "outcome": "53 tests pass with the network switched off. The repository was cloned into an empty folder, installed, and in a clean shell the tests passed, both route commands worked and the hand-written set gave the same 66.7%. The README has the diagram, real API output, both results tables and the limits. The hosted-model comparison was not run because no API key was available; its code path is covered by a test with a stand-in client.",
       "steps": [
         {
           "text": "Automated tests that run with no network and no key",
-          "done": false
+          "done": true
         },
         {
           "text": "Run from a fresh clone the way the README says",
-          "done": false
+          "done": true
         },
         {
           "text": "Hosted-model comparison if a key is available",
@@ -242,11 +242,11 @@
         },
         {
           "text": "README with diagram, real output and results table",
-          "done": false
+          "done": true
         },
         {
           "text": "Complete the dashboard entry",
-          "done": false
+          "done": true
         }
       ]
     }
@@ -315,20 +315,497 @@
         }
       ],
       "at_scale": "With a single graphics card the same code trains a model ten to fifty times larger. The LoRA settings and the evaluation stay the same; only the model name and the training time change."
+    },
+    {
+      "title": "Fine-tuning method",
+      "chosen": "LoRA with rank 16 on the attention layers, base model frozen, add-on merged into the weights for serving.",
+      "why": "LoRA trains 1.35% of the weights, so it fits on a CPU and finishes in 43 minutes. The result is a 7.4 MB file that can be stored in git, versioned and swapped, and after merging the model runs exactly as fast as the original.",
+      "alternatives": [
+        {
+          "option": "Full fine-tuning of all weights",
+          "why_not": "It needs several times more memory and time, produces a full model copy for every version, and on a few thousand examples it is more likely to damage what the model already knows."
+        },
+        {
+          "option": "QLoRA (LoRA on a 4-bit compressed model)",
+          "why_not": "It exists to fit large models on one graphics card. This model is small enough to train uncompressed, and 4-bit training needs a graphics card library."
+        },
+        {
+          "option": "Prompt engineering only",
+          "why_not": "It was measured first, as it should be. The base model got 0% with instructions and 12% with examples, so prompting alone does not work for a model this small."
+        }
+      ],
+      "at_scale": "The same method with a larger base model on a graphics card. Rank, learning rate and number of passes are chosen by a small search judged on the validation set, which this build did not do."
+    },
+    {
+      "title": "What to do after the first run generalised badly",
+      "chosen": "Fix the training data: add order-number mentions and unrelated numbers to messages of every intent, and double the training set to 8,000.",
+      "why": "The first run found only 56.2% of order numbers on the hand-written messages. Looking at the data showed why: in the source dataset a number only appears inside a few intents, so the model had learned a shortcut. Changing the data removed the shortcut and raised that figure to 93.8%, and intent accuracy on the hand-written set went from 53.3% to 66.7%.",
+      "alternatives": [
+        {
+          "option": "Train the same data for more passes",
+          "why_not": "More passes over data that contains the shortcut teach the shortcut more firmly."
+        },
+        {
+          "option": "Switch to a model three times larger",
+          "why_not": "It would probably help with unfamiliar wording, but it triples training time on a CPU and would hide a data problem that had a cheap fix."
+        }
+      ],
+      "at_scale": "This loop is the real work of a fine-tuning project: train, look at the mistakes on realistic messages, fix the data, train again. Budget for several rounds."
+    },
+    {
+      "title": "How to trust what the model writes",
+      "chosen": "Check every record in code and send failures to a person: valid JSON, labels on the approved list, intent matches category, order number present in the message.",
+      "why": "A language model can write anything, including a label that does not exist or an order number the customer never gave. These four checks are cheap, exact and independent of the model. On the test set they sent 0.3% of messages to review.",
+      "alternatives": [
+        {
+          "option": "Constrained decoding, which only lets the model produce allowed labels",
+          "why_not": "It guarantees a valid label but hides the cases where the model was confused, which are exactly the ones a person should see. It also adds a dependency and slows generation."
+        },
+        {
+          "option": "Trust the output because test accuracy is high",
+          "why_not": "97% correct still means about 3 wrong records in 100, and an invented order number acted on automatically is a real mistake for a customer."
+        }
+      ],
+      "at_scale": "A confidence score from the model's token probabilities is added, with a threshold tuned so that low-confidence records also go to review, and an 'other' label is added for off-topic messages."
+    },
+    {
+      "title": "What to compare the fine-tuned model with",
+      "chosen": "Three references on the same messages: the base model with instructions, the base model with eight examples in the prompt, and a classic TF-IDF classifier with a regular expression.",
+      "why": "A fine-tuning result means nothing alone. The prompt baselines show what training added to this model, and the classic classifier shows whether a language model was needed at all. The answer was mixed, and the README says so: the classic classifier is better on the label, the fine-tuned model is better on the whole record.",
+      "alternatives": [
+        {
+          "option": "Compare only with the untrained base model",
+          "why_not": "0% to 97.6% looks impressive and hides the fact that a ten-second classic model gets 99.1% on the label."
+        },
+        {
+          "option": "Compare with a large hosted model",
+          "why_not": "It is the comparison a client most wants and the code for it is written, but no API key was available during the build, so it is listed as pending instead of being guessed."
+        }
+      ],
+      "at_scale": "The hosted-model comparison is run on a few hundred real tickets with the cost per thousand messages next to the accuracy, because that trade-off is the business decision."
     }
   ],
-  "results": [],
-  "client_qa": [],
-  "concepts": [],
-  "keywords": [],
-  "topics": [],
-  "limits": [],
-  "run": [],
-  "files": [],
+  "results": [
+    {
+      "metric": "Automated tests",
+      "value": "53 passed",
+      "how": "`HF_HUB_OFFLINE=1 .venv/bin/pytest -q` (no key, no network, no model download)"
+    },
+    {
+      "metric": "Fine-tuned model: intent correct, held-out test set",
+      "value": "97.6% of 1,000",
+      "how": "`.venv/bin/python -m evals.run --systems classic mock lora --set test` (evals/report.json)"
+    },
+    {
+      "metric": "Fine-tuned model: whole record correct, held-out test set",
+      "value": "97.4% of 1,000",
+      "how": "`.venv/bin/python -m evals.run --systems classic mock lora --set test`"
+    },
+    {
+      "metric": "Classic classifier with regular expression: intent / whole record correct, test set",
+      "value": "99.1% / 95.5% of 1,000",
+      "how": "`.venv/bin/python -m evals.run --systems classic mock lora --set test`"
+    },
+    {
+      "metric": "Base model with instructions only: valid records, test sample",
+      "value": "0 of 100",
+      "how": "`.venv/bin/python -m evals.run --systems base-prompt base-examples --set test --limit 100`"
+    },
+    {
+      "metric": "Base model with 8 examples in the prompt: intent correct, test sample",
+      "value": "12.0% of 100",
+      "how": "`.venv/bin/python -m evals.run --systems base-prompt base-examples --set test --limit 100`"
+    },
+    {
+      "metric": "Fine-tuned model: intent correct, hand-written set",
+      "value": "66.7% of 60 (40 messages)",
+      "how": "`.venv/bin/python -m evals.run --systems classic mock lora --set challenge`"
+    },
+    {
+      "metric": "Classic classifier: intent correct, hand-written set",
+      "value": "73.3% of 60 (44 messages)",
+      "how": "`.venv/bin/python -m evals.run --systems classic mock lora --set challenge`"
+    },
+    {
+      "metric": "Order numbers invented where the message has none, test set",
+      "value": "0.2% fine-tuned model, 4.0% regular expression",
+      "how": "`.venv/bin/python -m evals.run --systems classic mock lora --set test` (order_number_invented_pct)"
+    },
+    {
+      "metric": "Order numbers found on the hand-written set, run 1 to run 2",
+      "value": "56.2% to 93.8% of 16",
+      "how": "`.venv/bin/python -m evals.run --systems lora --set challenge`, before and after the data change (evals/history/run1-report.json and evals/report.json)"
+    },
+    {
+      "metric": "Messages sent to review by the checks, fine-tuned model, test set",
+      "value": "0.3%",
+      "how": "`.venv/bin/python -m evals.run --systems classic mock lora --set test` (sent_to_review_pct)"
+    },
+    {
+      "metric": "Weights trained",
+      "value": "1,843,200 of 136,358,208 (1.35%)",
+      "how": "`.venv/bin/python -m triage.cli train` (adapter/training_log.json)"
+    },
+    {
+      "metric": "Training time on CPU",
+      "value": "42.9 minutes for 500 steps on 8,000 examples, 4 threads",
+      "how": "`.venv/bin/python -m triage.cli train --epochs 1 --eval-every 100` (adapter/training_log.json)"
+    },
+    {
+      "metric": "Validation loss before and after training",
+      "value": "2.8174 to 0.0063",
+      "how": "`.venv/bin/python -m triage.cli train --epochs 1 --eval-every 100` (adapter/training_log.json)"
+    },
+    {
+      "metric": "Size of the trained add-on",
+      "value": "7.4 MB",
+      "how": "`ls -la adapter` (adapter_model.safetensors, 7,404,368 bytes)"
+    },
+    {
+      "metric": "Speed of the fine-tuned model, one message at a time",
+      "value": "median 1,059 ms, 95th percentile 1,325 ms",
+      "how": "`.venv/bin/python -m evals.latency` (40 messages, 4 CPU threads, machine shared with other work)"
+    },
+    {
+      "metric": "Speed of the fine-tuned model in batches of 16",
+      "value": "188 ms per message",
+      "how": "`.venv/bin/python -m evals.run --systems classic mock lora --set test`"
+    }
+  ],
+  "client_qa": [
+    {
+      "q": "What would this do for my business?",
+      "a": "It reads each incoming support message and fills in what it is about, what the customer wants and which order it concerns, so the message lands with the right team or the right automated flow without a person sorting it first. It runs on your own server, so there is no fee per message and customer text does not leave your company."
+    },
+    {
+      "q": "Why not just use ChatGPT or another hosted model for this?",
+      "a": "You can, and for low volumes it is often the better choice because there is nothing to train or host. A small fine-tuned model makes sense when you have a lot of messages, when the data must stay in house, or when you need the answer to be the same every time. I did not measure a hosted model in this build because no key was available, so I will not quote a number for it; the comparison is one command once a key is set."
+    },
+    {
+      "q": "How accurate is it?",
+      "a": "On 1,000 messages from the same dataset that it did not train on, it gets the whole record right 97.4% of the time. On 60 messages I wrote myself in a different style it gets the intent right 66.7% of the time. The second number is the more honest one for a new project, and it tells you a model this small needs training examples that look like your real messages."
+    },
+    {
+      "q": "What happens when it gets one wrong?",
+      "a": "Every record is checked by code before anything acts on it. If the labels are not on your approved list, or the order number is not actually in the message, the message goes to a person instead. That catches the obviously broken answers. It does not catch a well-formed record with the wrong intent, which is why I would start with the model suggesting and a person confirming, and automate only the intents where it has proved reliable."
+    },
+    {
+      "q": "How much data would I need to give you?",
+      "a": "This model was trained on 8,000 labelled messages across 27 intents, about 300 per intent. A few hundred real messages per intent, labelled the way your agents already label tickets, is a sensible start. Quality matters more than volume: the biggest improvement in this project came from fixing a gap in the data, not from adding more of it."
+    },
+    {
+      "q": "What does it cost to train and run?",
+      "a": "Training took 43 minutes on an ordinary processor with no graphics card, so the compute cost is close to nothing. Running it needs a small server and about one second per message. The real cost is the time to prepare and check the training data and to review mistakes."
+    },
+    {
+      "q": "Your own numbers show a simple classifier beats the fine-tuned model on the label. So why fine-tune at all?",
+      "a": "For the label alone you should not, and I would tell you that before taking the work. The classic classifier got 99.1% against 97.6% and is thousands of times faster. Fine-tuning earns its place when the output is more than a label: here the model also copies the order number, and on the whole record it is ahead, 97.4% against 95.5%, because a regular expression also grabs numbers that are not order numbers. The more you need extracted or written, the more the language model is worth."
+    },
+    {
+      "q": "Why is it so much worse on the messages you wrote yourself?",
+      "a": "Two reasons. The public dataset was generated from templates, so the test messages look like the training messages and every trained system scores high on them. And a 135-million-parameter model has a limited grasp of language, so wording it has not seen throws it off. A larger base model and training data taken from real tickets are the two fixes."
+    },
+    {
+      "q": "What is LoRA, in one sentence?",
+      "a": "It is a way of training a model for your task that leaves the original model untouched and trains a small add-on beside it, here 1.35% of the size, which makes training cheap and the result a small file."
+    },
+    {
+      "q": "Can you do the same with a bigger model such as Llama or Mistral?",
+      "a": "Yes, the code is the same and only the model name changes. A model with a few billion parameters needs a graphics card to train in reasonable time, and for very large ones the model is compressed during training, which is called QLoRA. A larger model would handle unusual wording better."
+    },
+    {
+      "q": "Does the model make things up?",
+      "a": "It can, like any language model. The untrained model invented labels that do not exist. After fine-tuning, invented order numbers appeared in 0.2% of test messages that had none, and the check that the number must appear in the message sends those to a person."
+    },
+    {
+      "q": "How do I update it when my categories change?",
+      "a": "Edit the label list, add labelled examples for the new category, and run the training command again, which takes under an hour. The add-on is a 7 MB file, so versions can be kept side by side and rolled back."
+    },
+    {
+      "q": "Is one second per message fast enough?",
+      "a": "For sorting tickets, emails or form submissions in the background, yes. For a live chat that must react as the customer types, it is slow. In batches it handles a message in about 0.19 seconds, and a graphics card or a compressed version of the model would make it faster; I did not do that step here."
+    },
+    {
+      "q": "What happens with a message that is about none of the categories?",
+      "a": "Today it is forced into the nearest category, and the checks do not catch it. I tested this with a question about the weather and it was routed to a delivery intent. A real deployment adds an 'other' category with examples."
+    }
+  ],
+  "concepts": [
+    {
+      "term": "Fine-tuning",
+      "plain": "Continuing to train an existing model on your own examples so it gets better at one job. The model keeps its general knowledge of language and learns your labels and your output format."
+    },
+    {
+      "term": "Base model",
+      "plain": "The model as published, before any training on your data. Here it is SmolLM2 with 135 million parameters, small enough to run on an ordinary server."
+    },
+    {
+      "term": "Parameters",
+      "plain": "The numbers inside a model that training adjusts. More parameters mean a more capable and a slower, more expensive model; large hosted models have hundreds of billions."
+    },
+    {
+      "term": "LoRA (low-rank adaptation)",
+      "plain": "A way to fine-tune that leaves every original number frozen and trains a small set of extra numbers placed beside them. It needs far less memory and time than training the whole model, and the result is a small file."
+    },
+    {
+      "term": "Adapter (the add-on)",
+      "plain": "The small file LoRA produces. It only works together with the base model it was trained on, and several adapters for different jobs can share one base model."
+    },
+    {
+      "term": "Rank",
+      "plain": "The setting that fixes how big the LoRA add-on is. A higher rank can learn more but trains more numbers; 16 is a common middle value and is what this project uses."
+    },
+    {
+      "term": "Merging",
+      "plain": "Folding the trained add-on into the base model's numbers after training. The merged model gives the same answers and runs at the same speed as the original, with no extra parts."
+    },
+    {
+      "term": "PEFT",
+      "plain": "Parameter-efficient fine-tuning, the family of methods that train only a small part of a model. LoRA is the best known one, and PEFT is also the name of the Hugging Face library that implements it."
+    },
+    {
+      "term": "QLoRA",
+      "plain": "LoRA applied to a base model that has been compressed to 4-bit numbers, so a large model fits on one graphics card during training. It is not needed here because the model is small."
+    },
+    {
+      "term": "Prompt engineering",
+      "plain": "Getting a model to do a job by writing instructions, with no training. It is the first thing to try because it is free and fast, and fine-tuning is only worth it when prompting is not enough."
+    },
+    {
+      "term": "Few-shot prompting",
+      "plain": "Putting a handful of worked examples in the prompt so the model can imitate them. It costs nothing to set up but makes every request longer and slower."
+    },
+    {
+      "term": "Zero-shot",
+      "plain": "Asking a model to do a task from instructions alone, with no examples."
+    },
+    {
+      "term": "Small language model (SLM)",
+      "plain": "A language model small enough to run on a normal server or laptop. It is far less capable in general than a large hosted model, but on one narrow, trained task it can be good enough, cheap and private."
+    },
+    {
+      "term": "Structured output",
+      "plain": "Making a model answer in a fixed machine-readable shape, here a JSON record with three fields, so that code can use the answer directly."
+    },
+    {
+      "term": "Intent",
+      "plain": "What the customer wants, chosen from a fixed list, for example cancel_order or track_refund. It decides which team or which automated flow gets the message."
+    },
+    {
+      "term": "Entity extraction",
+      "plain": "Copying a specific value out of free text, here the order number. It is a different skill from choosing a label, because the answer is different in every message."
+    },
+    {
+      "term": "Hallucination",
+      "plain": "A model stating something that is not in its input, for example an order number the customer never wrote. This project catches that case in code by checking that the number appears in the message."
+    },
+    {
+      "term": "Training, validation and test sets",
+      "plain": "The data is split in three. The model learns from the training set, the validation set is watched during training to see that it is still improving, and the test set is used once at the end to measure it on messages it never saw."
+    },
+    {
+      "term": "Loss",
+      "plain": "A number that says how far the model's output is from the right answer during training; lower is better. Watching the loss on the validation set shows whether training is working."
+    },
+    {
+      "term": "Overfitting",
+      "plain": "When a model memorises its training examples instead of learning the task, so it scores well on familiar data and badly on new data. The hand-written test set in this project exists to detect it."
+    },
+    {
+      "term": "Epoch",
+      "plain": "One pass over the whole training set."
+    },
+    {
+      "term": "Baseline",
+      "plain": "A simpler system measured on the same data, so there is something to compare with. Without one, an accuracy number says nothing about whether the work was worth doing."
+    },
+    {
+      "term": "TF-IDF and logistic regression",
+      "plain": "A classic way to classify text: count which words appear, weight the rare ones more, and fit a simple statistical model. It is not a language model, trains in seconds and is often hard to beat on plain classification."
+    },
+    {
+      "term": "Greedy decoding",
+      "plain": "Letting the model always pick its most likely next word. The same message then always gets the same answer, which is what routing needs."
+    },
+    {
+      "term": "Tokens",
+      "plain": "The pieces of text a model reads and writes, roughly three quarters of a word each. Hosted models charge per token, and speed depends on how many tokens go in and come out."
+    }
+  ],
+  "keywords": [
+    "fine-tuning",
+    "fine tuning",
+    "finetune",
+    "LoRA",
+    "QLoRA",
+    "PEFT",
+    "parameter-efficient fine-tuning",
+    "adapter",
+    "custom LLM",
+    "custom model training",
+    "train a model on my data",
+    "small language model",
+    "SLM",
+    "open-source LLM",
+    "Hugging Face",
+    "Transformers",
+    "SmolLM2",
+    "Llama",
+    "Mistral",
+    "Phi",
+    "local LLM",
+    "on-premise AI",
+    "self-hosted model",
+    "private AI",
+    "data privacy",
+    "CPU inference",
+    "no GPU",
+    "model training",
+    "supervised fine-tuning",
+    "instruction tuning",
+    "structured output",
+    "JSON output",
+    "intent classification",
+    "ticket routing",
+    "ticket triage",
+    "entity extraction",
+    "customer support automation",
+    "baseline comparison",
+    "few-shot prompting",
+    "prompt engineering vs fine-tuning",
+    "model evaluation",
+    "hallucination check",
+    "guardrails",
+    "reduce API cost",
+    "replace OpenAI",
+    "merge adapter",
+    "PyTorch"
+  ],
+  "topics": [
+    "lora",
+    "fine-tuning",
+    "peft",
+    "small-language-models",
+    "huggingface-transformers",
+    "pytorch",
+    "smollm2",
+    "llm",
+    "structured-output",
+    "intent-classification",
+    "ticket-triage",
+    "customer-support",
+    "cpu-inference",
+    "evaluation",
+    "fastapi",
+    "python"
+  ],
+  "limits": [
+    "A classic classifier is as good or better on the intent label alone: 99.1% against 97.6% on the test set and 73.3% against 66.7% on the hand-written set. The fine-tuned model is ahead only on the whole record (97.4% against 95.5%), thanks to the order number.",
+    "The model is weak on wording it has not seen: 66.7% of intents on the hand-written set against 97.6% on the test set. The public dataset was generated from templates, so test messages resemble training messages and test scores flatter every trained system.",
+    "The hand-written set has only 60 messages, written by the author, and it is not fully blind: the training data was changed after seeing the first run's result on it, so the 93.8% of order numbers found there is partly the result of tuning towards it.",
+    "There is no 'none of these' label. An off-topic message is routed to the nearest intent and the checks do not catch it.",
+    "Only one field is extracted (the order number) and only one per message. Names, amounts and cities in the data are invented fillers.",
+    "About one second per message one at a time on a shared 4-thread CPU. No quantisation or ONNX export was done.",
+    "One training run per setting and one seed. No search over rank or learning rate and no confidence intervals. The two base-model prompt baselines were scored on the first 100 test messages, not all 1,000.",
+    "No hosted model was measured, because OPENAI_API_KEY in the portfolio .env file was empty during the build. The hosted path is tested only with a stand-in client.",
+    "The offline keyword rules exist for tests. Their 70% on the hand-written set is flattering because the same author wrote both; on the test set they get 52.3%.",
+    "English only. The public dataset includes some rude wording, as real support messages do.",
+    "The training data is downloaded from the Hugging Face Hub and is not stored in the repository, so reproducing the training needs network access. The quick start in the README uses pip; the fresh-clone check in this build used uv."
+  ],
+  "run": [
+    "cd /var/www/AB/github-projects/projects/10-lora-finetune",
+    ".venv/bin/pytest -q                                               # the tests, offline, no model download",
+    "TRIAGE_PROVIDER=mock .venv/bin/python -m triage.cli route \"Please cancel order ORD-12345\"   # offline rules, instant",
+    ".venv/bin/python -m triage.cli route \"The kettle arrived broken. I want my money back for order PX300127.\"   # the fine-tuned model (downloads the base model once)",
+    ".venv/bin/python -m triage.cli serve                             # the API, then open http://127.0.0.1:8540/docs",
+    ".venv/bin/python -m triage.cli data                              # download the public dataset and write the splits",
+    ".venv/bin/python -m evals.run --systems classic lora mock --set test        # score on the 1,000 held-out messages",
+    ".venv/bin/python -m evals.run --systems classic lora mock --set challenge   # score on the 60 hand-written messages",
+    ".venv/bin/python -m evals.table                                  # print the comparison table",
+    ".venv/bin/python -m triage.cli train                             # train the add-on again (about 45 minutes on a CPU)"
+  ],
+  "files": [
+    {
+      "path": "triage/train.py",
+      "what": "The LoRA fine-tuning loop: which weights are trained, how examples are encoded so only the answer counts, the learning-rate schedule and the saved loss log. The most important file to understand."
+    },
+    {
+      "path": "triage/data.py",
+      "what": "Turns the public dataset into message and JSON pairs: fills placeholders, removes duplicates, splits."
+    },
+    {
+      "path": "triage/schema.py",
+      "what": "The record the model must write and the checks that decide whether it can be trusted."
+    },
+    {
+      "path": "triage/labels.py",
+      "what": "The approved list of 11 categories and 27 intents. The file a client replaces with their own."
+    },
+    {
+      "path": "triage/prompts.py",
+      "what": "The short prompt for the fine-tuned model and the full instructions for a model that was not trained."
+    },
+    {
+      "path": "triage/model.py",
+      "what": "Loads the base model with or without the add-on, merges it, and generates text in batches on the CPU."
+    },
+    {
+      "path": "triage/providers.py",
+      "what": "The systems that can route a message: offline rules, the local model, an optional hosted model."
+    },
+    {
+      "path": "triage/baseline.py",
+      "what": "The classic TF-IDF classifier with a regular expression for the order number, used as a reference."
+    },
+    {
+      "path": "triage/metrics.py",
+      "what": "The scorer: one function that scores every system the same way."
+    },
+    {
+      "path": "triage/service.py",
+      "what": "Routes one message and sets the review flag."
+    },
+    {
+      "path": "triage/api.py",
+      "what": "The FastAPI application with the /route endpoint."
+    },
+    {
+      "path": "triage/cli.py",
+      "what": "The command line: data, train, route, serve."
+    },
+    {
+      "path": "adapter/",
+      "what": "The trained LoRA add-on (7.4 MB) and training_log.json with the loss at every checkpoint."
+    },
+    {
+      "path": "evals/run.py",
+      "what": "Scores the chosen systems on the chosen set and writes evals/report.json."
+    },
+    {
+      "path": "evals/challenge.jsonl",
+      "what": "The 60 hand-written messages with their expected records."
+    },
+    {
+      "path": "evals/latency.py",
+      "what": "Times the fine-tuned model one message at a time, merged and unmerged."
+    },
+    {
+      "path": "evals/history/",
+      "what": "The report and loss log of the first training run, kept for the before and after comparison."
+    },
+    {
+      "path": "evals/report.json",
+      "what": "Every measured number in the README, with sample outputs of each system."
+    },
+    {
+      "path": "tests/",
+      "what": "The automated tests, including a real LoRA training run on a tiny model built in memory."
+    }
+  ],
   "verification": {
-    "tests": "",
+    "tests": "53 passed (HF_HUB_OFFLINE=1 .venv/bin/pytest -q, no key, no network). Also run from a fresh clone in a clean shell, where the suite passed and the fine-tuned model gave the same 66.7% on the hand-written set.",
     "live_llm": "pending",
     "cost_usd": 0,
-    "notes": ""
+    "notes": "This project's language model is local, and its real path was run in this build: the base model was downloaded, fine-tuned on the CPU for 42.9 minutes, scored on 1,000 held-out messages, and served through the API. Nothing was spent. The optional hosted-model comparison (python -m evals.run --systems hosted) is pending because OPENAI_API_KEY in /var/www/AB/github-projects/.env was empty; that path is covered by a test with a stand-in client. The machine was running another model for part of the build, so the timings are on the slow side."
   }
 }
